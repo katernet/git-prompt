@@ -1,55 +1,37 @@
-# git-prompt.zsh -- a lightweight git prompt for zsh.
-# Copyright © 2019 Wolfgang Popp
-#
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included
-# in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-# DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
-# OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Adapted from git-prompt.zsh https://github.com/woefe/git-prompt.zsh
 
-autoload -U colors && colors
+##autoload -U colors && colors # Already loaded
 
 : "${ZSH_THEME_GIT_PROMPT_PREFIX="["}"
-: "${ZSH_THEME_GIT_PROMPT_SUFFIX="] "}"
-: "${ZSH_THEME_GIT_PROMPT_SEPARATOR="|"}"
-: "${ZSH_THEME_GIT_PROMPT_DETACHED="%{$fg_bold[cyan]%}:"}"
-: "${ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_bold[magenta]%}"}"
-: "${ZSH_THEME_GIT_PROMPT_BEHIND="↓"}"
-: "${ZSH_THEME_GIT_PROMPT_AHEAD="↑"}"
-: "${ZSH_THEME_GIT_PROMPT_UNMERGED="%{$fg[red]%}✖"}"
-: "${ZSH_THEME_GIT_PROMPT_STAGED="%{$fg[green]%}●"}"
-: "${ZSH_THEME_GIT_PROMPT_UNSTAGED="%{$fg[red]%}✚"}"
+: "${ZSH_THEME_GIT_PROMPT_SUFFIX="]"}" ##
+: "${ZSH_THEME_GIT_PROMPT_SEPARATOR="["}" ##
+: "${ZSH_THEME_GIT_PROMPT_DETACHED=":"}" ##
+##: "${ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_bold[magenta]%}"}"
+: "${ZSH_THEME_GIT_PROMPT_BEHIND="⇣"}" ##
+: "${ZSH_THEME_GIT_PROMPT_AHEAD="⇡"}" ##
+: "${ZSH_THEME_GIT_PROMPT_UNMERGED="✖"}" ##
+: "${ZSH_THEME_GIT_PROMPT_STAGED=""}" ##
+: "${ZSH_THEME_GIT_PROMPT_UNSTAGED=""}" ##
 : "${ZSH_THEME_GIT_PROMPT_UNTRACKED="…"}"
-: "${ZSH_THEME_GIT_PROMPT_STASHED="%{$fg[blue]%}⚑"}"
-: "${ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[green]%}✔"}"
+: "${ZSH_THEME_GIT_PROMPT_STASHED="⚑"}" ##
+##: "${ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[green]%}✔"}"
 
 # Disable promptinit if it is loaded
-(( $+functions[promptinit] )) && {promptinit; prompt off}
+##(( $+functions[promptinit] )) && {promptinit; prompt off}
 
 # Allow parameter and command substitution in the prompt
-setopt PROMPT_SUBST
+##setopt PROMPT_SUBST # Already set
 
 # Override PROMPT if it does not use the gitprompt function
-[[ "$PROMPT" != *gitprompt* && "$RPROMPT" != *gitprompt* ]] \
-    && PROMPT='%B%40<..<%~ %b$(gitprompt)%(?.%F{blue}❯%f%F{cyan}❯%f%F{green}❯%f.%F{red}❯❯❯%f) '
+##[[ "$PROMPT" != *gitprompt* && "$RPROMPT" != *gitprompt* ]] \
+##    && PROMPT='%B%40<..<%~ %b$(gitprompt)%(?.%F{blue}❯%f%F{cyan}❯%f%F{green}❯%f.%F{red}❯❯❯%f) '
 
 # Find an awk implementation
 # Prefer nawk over mawk and mawk over awk
-(( $+commands[mawk] )) && : "${ZSH_GIT_PROMPT_AWK_CMD:=mawk}"
-(( $+commands[nawk] )) && : "${ZSH_GIT_PROMPT_AWK_CMD:=nawk}"
-                          : "${ZSH_GIT_PROMPT_AWK_CMD:=awk}"
+##(( $+commands[mawk] )) && : "${ZSH_GIT_PROMPT_AWK_CMD:=mawk}"
+##(( $+commands[nawk] )) && : "${ZSH_GIT_PROMPT_AWK_CMD:=nawk}"
+##                          : "${ZSH_GIT_PROMPT_AWK_CMD:=awk}"
+ZSH_GIT_PROMPT_AWK_CMD=awk # Prefer macOS awk
 
 function _zsh_git_prompt_git_status() {
     emulate -L zsh
@@ -60,11 +42,10 @@ function _zsh_git_prompt_git_status() {
         )
         command git status --branch --porcelain=v2 2>&1 || echo "fatal: git command failed"
     } | $ZSH_GIT_PROMPT_AWK_CMD \
-        -v PREFIX="$ZSH_THEME_GIT_PROMPT_PREFIX" \
+	-v PREFIX="$ZSH_THEME_GIT_PROMPT_PREFIX" \
         -v SUFFIX="$ZSH_THEME_GIT_PROMPT_SUFFIX" \
         -v SEPARATOR="$ZSH_THEME_GIT_PROMPT_SEPARATOR" \
         -v DETACHED="$ZSH_THEME_GIT_PROMPT_DETACHED" \
-        -v BRANCH="$ZSH_THEME_GIT_PROMPT_BRANCH" \
         -v BEHIND="$ZSH_THEME_GIT_PROMPT_BEHIND" \
         -v AHEAD="$ZSH_THEME_GIT_PROMPT_AHEAD" \
         -v UNMERGED="$ZSH_THEME_GIT_PROMPT_UNMERGED" \
@@ -72,9 +53,7 @@ function _zsh_git_prompt_git_status() {
         -v UNSTAGED="$ZSH_THEME_GIT_PROMPT_UNSTAGED" \
         -v UNTRACKED="$ZSH_THEME_GIT_PROMPT_UNTRACKED" \
         -v STASHED="$ZSH_THEME_GIT_PROMPT_STASHED" \
-        -v CLEAN="$ZSH_THEME_GIT_PROMPT_CLEAN" \
-        -v RC="%{$reset_color%}" \
-        '
+	'
             BEGIN {
                 ORS = "";
 
@@ -134,18 +113,18 @@ function _zsh_git_prompt_git_status() {
                     exit(1);
                 }
 
-                print PREFIX;
-                print RC;
+                ##print PREFIX;
+                ##print RC;
 
                 if (head == "(detached)") {
                     print DETACHED;
                     print substr(oid, 0, 7);
                 } else {
-                    print BRANCH;
+                    #print BRANCH;
                     gsub("%", "%%", head);
                     print head;
                 }
-                print RC;
+                ##print RC;
 
                 if (behind < 0) {
                     print BEHIND;
@@ -156,48 +135,61 @@ function _zsh_git_prompt_git_status() {
                 if (ahead > 0) {
                     print AHEAD;
                     printf "%d", ahead;
-                    print RC;
+                    #print RC;
                 }
 
-                print SEPARATOR;
+                ##print SEPARATOR;
+		
+		##
+		if (unmerged > 0 || staged > 0 || unstaged > 0 || untracked > 0) {
+                    print SEPARATOR;
+                }
+		##
 
                 if (unmerged > 0) {
+                    ##print SEPARATOR;
                     print UNMERGED;
                     print unmerged;
-                    print RC;
+                    ##print RC;
                 }
 
                 if (staged > 0) {
                     print STAGED;
                     print staged;
-                    print RC;
+                    ##print RC;
                 }
 
                 if (unstaged > 0) {
                     print UNSTAGED;
                     print unstaged;
-                    print RC;
+                    ##print RC;
                 }
 
                 if (untracked > 0) {
                     print UNTRACKED;
                     print untracked;
-                    print RC;
+                    ##print RC;
                 }
 
                 if (stashed > 0) {
                     print STASHED;
                     print stashed;
-                    print RC;
+                    ##print RC;
                 }
 
-                if (unmerged == 0 && staged == 0 && unstaged == 0 && untracked == 0) {
-                    print CLEAN;
-                    print RC;
+                ##if (unmerged == 0 && staged == 0 && unstaged == 0 && untracked == 0) {
+                ##    print CLEAN;
+                ##    print RC;
+                ##}
+		
+		##
+		if (unmerged > 0 || staged > 0 || unstaged > 0 || untracked > 0) {
+                    print SUFFIX;
                 }
+		##
 
-                print SUFFIX;
-                print RC;
+                ##print SUFFIX;
+                ##print RC;
             }
         '
 }
