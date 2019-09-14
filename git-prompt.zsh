@@ -1,4 +1,4 @@
-Adapted from git-prompt.zsh https://github.com/woefe/git-prompt.zsh
+# Adapted from git-prompt.zsh https://github.com/woefe/git-prompt.zsh
 
 ##autoload -U colors && colors # Already loaded
 
