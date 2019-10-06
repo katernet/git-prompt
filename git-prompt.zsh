@@ -36,7 +36,8 @@ ZSH_GIT_PROMPT_AWK_CMD=awk # Prefer macOS awk
 function _zsh_git_prompt_git_status() {
     emulate -L zsh
     {
-        [[ -n "$ZSH_GIT_PROMPT_SHOW_STASH" ]] && (
+        ##[[ -n "$ZSH_GIT_PROMPT_SHOW_STASH" ]] && (
+		  (
             c=$(git rev-list --walk-reflogs --count refs/stash 2> /dev/null)
             [[ -n "$c" ]] && echo "# stash.count $c"
         )
