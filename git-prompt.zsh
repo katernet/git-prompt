@@ -140,10 +140,10 @@ function _zsh_git_prompt_git_status() {
                 }
 
                 ##print SEPARATOR;
-		
+
 		##
-		if (unmerged > 0 || staged > 0 || unstaged > 0 || untracked > 0) {
-                    print SEPARATOR;
+		if (unmerged > 0 || staged > 0 || unstaged > 0 || untracked > 0 || stashed > 0) {
+                    print PREFIX;
                 }
 		##
 
@@ -182,9 +182,9 @@ function _zsh_git_prompt_git_status() {
                 ##    print CLEAN;
                 ##    print RC;
                 ##}
-		
+
 		##
-		if (unmerged > 0 || staged > 0 || unstaged > 0 || untracked > 0) {
+		if (unmerged > 0 || staged > 0 || unstaged > 0 || untracked > 0 || stashed > 0) {
                     print SUFFIX;
                 }
 		##
