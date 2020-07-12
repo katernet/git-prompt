@@ -1,7 +1,5 @@
 # Adapted from git-prompt.zsh https://github.com/woefe/git-prompt.zsh
 
-##autoload -U colors && colors # Already loaded
-
 : "${ZSH_THEME_GIT_PROMPT_PREFIX="["}"
 : "${ZSH_THEME_GIT_PROMPT_SUFFIX="]"}" ##
 : "${ZSH_THEME_GIT_PROMPT_DETACHED=":"}" ##
