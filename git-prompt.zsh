@@ -4,9 +4,7 @@
 
 : "${ZSH_THEME_GIT_PROMPT_PREFIX="["}"
 : "${ZSH_THEME_GIT_PROMPT_SUFFIX="]"}" ##
-##: "${ZSH_THEME_GIT_PROMPT_SEPARATOR="["}" ##
 : "${ZSH_THEME_GIT_PROMPT_DETACHED=":"}" ##
-##: "${ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_bold[magenta]%}"}"
 : "${ZSH_THEME_GIT_PROMPT_BEHIND="⇣"}" ##
 : "${ZSH_THEME_GIT_PROMPT_AHEAD="⇡"}" ##
 : "${ZSH_THEME_GIT_PROMPT_UNMERGED="✗"}" ##
@@ -14,35 +12,16 @@
 : "${ZSH_THEME_GIT_PROMPT_UNSTAGED=""}" ##
 : "${ZSH_THEME_GIT_PROMPT_UNTRACKED="…"}"
 : "${ZSH_THEME_GIT_PROMPT_STASHED="⚑"}" ##
-##: "${ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[green]%}✔"}"
-
-# Disable promptinit if it is loaded
-##(( $+functions[promptinit] )) && {promptinit; prompt off}
-
-# Allow parameter and command substitution in the prompt
-##setopt PROMPT_SUBST # Already set
-
-# Override PROMPT if it does not use the gitprompt function
-##[[ "$PROMPT" != *gitprompt* && "$RPROMPT" != *gitprompt* ]] \
-##    && PROMPT='%B%40<..<%~ %b$(gitprompt)%(?.%F{blue}❯%f%F{cyan}❯%f%F{green}❯%f.%F{red}❯❯❯%f) '
-
-# Find an awk implementation
-# Prefer nawk over mawk and mawk over awk
-##(( $+commands[mawk] )) && : "${ZSH_GIT_PROMPT_AWK_CMD:=mawk}"
-##(( $+commands[nawk] )) && : "${ZSH_GIT_PROMPT_AWK_CMD:=nawk}"
-##                          : "${ZSH_GIT_PROMPT_AWK_CMD:=awk}"
-ZSH_GIT_PROMPT_AWK_CMD=awk # Prefer macOS awk
 
 function _zsh_git_prompt_git_status() {
     emulate -L zsh
     {
-        ##[[ -n "$ZSH_GIT_PROMPT_SHOW_STASH" ]] && (
-		  (
+        (
             c=$(git rev-list --walk-reflogs --count refs/stash 2> /dev/null)
             [[ -n "$c" ]] && echo "# stash.count $c"
         )
         command git status --branch --porcelain=v2 2>&1 || echo "fatal: git command failed"
-    } | $ZSH_GIT_PROMPT_AWK_CMD \
+    } | awk \
 	-v PREFIX="$ZSH_THEME_GIT_PROMPT_PREFIX" \
         -v SUFFIX="$ZSH_THEME_GIT_PROMPT_SUFFIX" \
         -v SEPARATOR="$ZSH_THEME_GIT_PROMPT_SEPARATOR" \
@@ -114,9 +93,6 @@ function _zsh_git_prompt_git_status() {
                     exit(1);
                 }
 
-                ##print PREFIX;
-                ##print RC;
-
                 if (head == "(detached)") {
                     print DETACHED;
                     print substr(oid, 0, 7);
@@ -125,7 +101,6 @@ function _zsh_git_prompt_git_status() {
                     gsub("%", "%%", head);
                     print head;
                 }
-                ##print RC;
 
                 if (behind < 0) {
                     print BEHIND;
@@ -139,58 +114,38 @@ function _zsh_git_prompt_git_status() {
                     #print RC;
                 }
 
-                ##print SEPARATOR;
-
-		##
 		if (unmerged > 0 || staged > 0 || unstaged > 0 || untracked > 0 || stashed > 0) {
                     print PREFIX;
                 }
-		##
 
                 if (unmerged > 0) {
-                    ##print SEPARATOR;
                     print UNMERGED;
                     print unmerged;
-                    ##print RC;
                 }
 
                 if (staged > 0) {
                     print STAGED;
                     print staged;
-                    ##print RC;
                 }
 
                 if (unstaged > 0) {
                     print UNSTAGED;
                     print unstaged;
-                    ##print RC;
                 }
 
                 if (untracked > 0) {
                     print UNTRACKED;
                     print untracked;
-                    ##print RC;
                 }
 
                 if (stashed > 0) {
                     print STASHED;
                     print stashed;
-                    ##print RC;
                 }
 
-                ##if (unmerged == 0 && staged == 0 && unstaged == 0 && untracked == 0) {
-                ##    print CLEAN;
-                ##    print RC;
-                ##}
-
-		##
 		if (unmerged > 0 || staged > 0 || unstaged > 0 || untracked > 0 || stashed > 0) {
                     print SUFFIX;
                 }
-		##
-
-                ##print SUFFIX;
-                ##print RC;
             }
         '
 }
